@@ -1,149 +1,145 @@
 from collections import deque
+from math import log
+from pydoc import describe
 from random import choices
 from typing import List, Tuple
 from src.point import Point
 from utils.promt import get_promt_num
+from utils.colors import bcolors
+from src.printer import IBoardPrinter
 
 
 class Board:
-    occupied: set[Tuple[int, int]]
     over: bool
-    # 4 - left, 6 - right
+    max_num: int
+    # 4 - left,   6 - right
     # 2 - bottom, 8 - top
 
-    def __init__(self):
+    def __init__(self, printer: IBoardPrinter):
         self.size = 4
-        self.state = [[None] * self.size for _ in range(self.size)]
-        self.occupied = set()
+        self.state = [[0] * self.size for _ in range(self.size)]
         self.over = False
-        self._initGame()
+        self.max_num = 2
+        self.printer = printer
+        self._populateNumbers()
 
-    def _initGame(self):
-        c1, c2 = self._generateCoords()
-        c3, c4 = self._generateCoords()
-        c5, c6 = self._generateCoords()
-        for p in [c1, c2, c3, c4, c5, c6]:
-            self.state[p.row][p.col] = self._generateRandom(2)
+    def getState(self):
+        return self.state
 
-    def _generateRandom(self, limit: int):
-        if limit > 20:
-            return 2048
+    def _populateNumbers(self, limit: int = 2):
+        for _ in range(limit):
+            p = self._generateCoords()
+            self.state[p.row][p.col] = self._generateRandomPowerOfTwo()
 
-        return 2 ** choices(range(1, limit))[-1]
+        self.over = True
+        for row in self.state:
+            filled = all(row)
+            if not filled:
+                self.over = False
 
-    def _generateCoords(self) -> Tuple[Point, Point]:
-        coords1, coords2 = self._generateRandomPair()
-        while self._isCoordsInvalid(coords1, coords2):
-            coords1, coords2 = self._generateRandomPair()
+    def _generateRandomPowerOfTwo(self) -> int:
+        return 2 ** choices(range(1, self.max_num))[-1]
 
-        return (Point(*coords1), Point(*coords2))
+    def _generateCoords(self) -> Point:
+        coord = self._generateRandomCoord()
+        while self._isCoordsInvalid(coord):
+            coord = self._generateRandomCoord()
 
-    def _generateRandomPair(self):
-        coords1 = choices(range(self.size), k=2)
-        coords2 = choices(range(self.size), k=2)
-        return coords1, coords2
+        return Point(*coord)
 
-    def _isCoordsInvalid(self, c1: List[int], c2: List[int]):
-        tc1, tc2 = tuple(c1), tuple(c2)
+    def _generateRandomCoord(self) -> List[int]:
+        return choices(range(self.size), k=2)
 
-        if tc1 == tc2:
+    def _isCoordsInvalid(self, c1: List[int]):
+        i, j = c1
+        if self.state[i][j]:
             return True
-        if tc1 in self.occupied or tc2 in self.occupied:
-            return True
 
-        self.occupied.add(tc1)
-        self.occupied.add(tc2)
         return False
 
-    def printBoard(self):
-        print(f"Board State")
-        for row in self.state:
-            for val in row:
-                print(val if val else "-", end="  ")
-            print("\n")
-
     def startGame(self):
-        self.printBoard()
+        state = self.getState()
+        self.printer.printState(state)
         while not self.over:
             self.present()
+        self.printer.gameOver()
 
     def present(self):
         num = get_promt_num(
             "Enter Top[8] Right[6] Bottom[2] Left[4] : ", default_val=2)
         self.shift(num)
-        self.printBoard()
+        self._populateNumbers(1)
+        self.printer.printState(self.getState())
 
     def shift(self, num: int):
         match num:
             case 8: self.top()
-            case 6: self.right()
+            case 6: self.moveRight()
             case 2: self.bottom()
-            case 4: self.left()
+            case 4: self.moveLeft()
 
-    def mergeColumn(self, col: int) -> List[int]:
-        new_column = []
+    def _slideLeft(self, row: int) -> List[int]:
+        non_zero = [val for val in self.state[row] if val]
+        updated_row = []
+        for val in non_zero:
+            if updated_row and updated_row[-1] == val:
+                updated_row[-1] *= -2
+                # capping for generating future numbers
+                power = int(log(abs(updated_row[-1]), 2))
+                self.max_num = max(self.max_num, power)
+
+            else:
+                updated_row.append(val)
+
+        # get remaining cells number
+        # append remaining cells with '0'
+        remaining_cells = self.size - len(updated_row)
+        updated_row += [0] * remaining_cells
+        updated_row = [abs(x) for x in updated_row]
+
+        # update row
+        self.state[row] = updated_row
+
+    def _transpose(self):
+        """
+        Transpose matrix
+        ```
+        input:
+                [1, 2]   
+                [3, 4]   
+        output:
+                [1, 3]
+                [2, 4]
+        ```
+        """
+        self.state = list([list(x) for x in zip(*self.state)])
+
+    def _reverse_rows(self):
+        """
+        Reverses matrix rows
+        ```
+        [1, 2]   [2, 1]
+        [3, 4]   [4, 3]
+        ```
+        """
+        for i, row in enumerate(self.state):
+            self.state[i] = row[::-1]
+
+    def moveLeft(self):
         for i in range(self.size):
-            val = self.state[i][col]
-            if not val:
-                continue
+            self._slideLeft(i)
 
-            if new_column and new_column[-1] == val:
-                new_column[-1] += val
-            else:
-                new_column.append(val)
-
-        return new_column
-
-    def mergeRow(self, row: int) -> List[int]:
-        new_row = []
-        for j in range(self.size):
-            val = self.state[row][j]
-            if not val:
-                continue
-
-            if new_row and new_row[-1] == val:
-                new_row[-1] += val
-            else:
-                new_row.append(val)
-
-        return new_row
+    def moveRight(self):
+        self._reverse_rows()
+        self.moveLeft()
+        self._reverse_rows()
 
     def top(self):
-        for col in range(self.size):
-            new_column = self.mergeColumn(col)
-            for row in range(self.size):
-                if row < len(new_column):
-                    self.state[row][col] = new_column[row]
-                    continue
-
-                self.state[row][col] = None
+        self._transpose()
+        self.moveLeft()
+        self._transpose()
 
     def bottom(self):
-        for col in range(self.size):
-            new_column = self.mergeColumn(col)
-            for row in range(self.size):
-                if row < len(new_column):
-                    self.state[self.size - row - 1][col] = new_column[row]
-                    continue
-
-                self.state[self.size - row - 1][col] = None
-
-    def right(self):
-        for row in range(self.size):
-            new_row = self.mergeRow(row)
-            for col in range(self.size):
-                if col < len(new_row):
-                    self.state[row][self.size - col - 1] = new_row[col]
-                    continue
-
-                self.state[row][self.size - col - 1] = None
-
-    def left(self):
-        for row in range(self.size):
-            new_row = self.mergeRow(row)
-            for col in range(self.size):
-                if col < len(new_row):
-                    self.state[row][col] = new_row[col]
-                    continue
-
-                self.state[row][col] = None
+        self._transpose()
+        self.moveRight()
+        self._transpose()
