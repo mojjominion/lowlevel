@@ -1,11 +1,8 @@
-from collections import deque
 from math import log
-from pydoc import describe
 from random import choices
-from typing import List, Tuple
+from typing import List
 from src.point import Point
 from utils.promt import get_promt_num
-from utils.colors import bcolors
 from src.printer import IBoardPrinter
 
 
