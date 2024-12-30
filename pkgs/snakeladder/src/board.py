@@ -1,7 +1,7 @@
+from typing import List, Sequence
 
-from typing import List
-from src.player import IPlayer
 from src.dice import Dice
+from src.player import IPlayer
 from src.tunnels import ITunnel
 
 
@@ -13,15 +13,17 @@ class Board:
     state: List[List[set[IPlayer]]]
     tunnelState: List[List[ITunnel | None]]
 
-    def __init__(self, size: int, players: List[IPlayer] = [], pipes: List[ITunnel] = []):
+    def __init__(
+        self, size: int, players: List[IPlayer] = [], pipes: List[ITunnel] = []
+    ):
         self.size = size
         self.players = players
         self.pipes = pipes
         self.dices = []
-        self.state = [[set() for __ in range(size)] for _ in range(size)]
-        self.tunnelState = [[None for __ in range(size)] for _ in range(size)]
+        self.state = [[set() for _ in range(size)] for _ in range(size)]
+        self.tunnelState = [[None for _ in range(size)] for _ in range(size)]
 
-    def addPlayers(self, players: List[IPlayer]):
+    def addPlayers(self, players: Sequence[IPlayer]):
         self.players.extend(players)
         for player in players:
             coords = player.getCoords()
@@ -44,8 +46,7 @@ class Board:
 
     def _initPipes(self):
         self.pipes = []
-        self.tunnelState = [[None for __ in range(
-            self.size)] for _ in range(self.size)]
+        self.tunnelState = [[None for _ in range(self.size)] for _ in range(self.size)]
 
     def getPipes(self):
         return self.pipes

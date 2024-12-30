@@ -1,4 +1,3 @@
-
 from dataclasses import dataclass
 
 
@@ -7,7 +6,10 @@ class Point:
     row: int
     col: int
 
-    def __eq__(self, other: 'Point') -> bool:
+    def __eq__(self, other: object):
+        if not isinstance(other, Point):
+            return NotImplemented
+
         return self.row == other.row and self.col == other.col
 
 

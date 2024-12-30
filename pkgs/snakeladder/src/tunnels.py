@@ -18,11 +18,11 @@ class ITunnel(ABC):
     color: str
 
     @abstractmethod
-    def goto() -> Point:
+    def goto(self) -> Point:
         pass
 
     @abstractmethod
-    def getEntryCoords() -> Point:
+    def getEntryCoords(self) -> Point:
         pass
 
 

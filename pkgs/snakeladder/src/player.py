@@ -1,7 +1,7 @@
-
-from src.data import Point, Move
 from abc import ABC, abstractmethod
 from typing import List
+
+from src.data import Move, Point
 
 
 class IPlayer(ABC):
@@ -11,20 +11,21 @@ class IPlayer(ABC):
     moves: List[Move]
 
     @abstractmethod
-    def getMoves():
+    def getMoves(self) -> List[Move]:
         pass
 
     @abstractmethod
-    def getCoords() -> Point:
+    def getCoords(self) -> Point:
         pass
 
     @abstractmethod
-    def move(self, new_coords: Point) -> Point:
+    def move(self, coords: Point) -> Point:
         pass
 
 
 class Player(IPlayer):
     def __init__(self, name: str, coords: Point = Point(0, 0), moves: List[Move] = []):
+        self.id = name
         self.name = name
         self.coords = coords
         self.moves = moves
