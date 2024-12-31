@@ -5,3 +5,6 @@ test-design-patterns:
 
 test-ds: 
 	python3 -m unittest discover -v ./data_structures ${p}
+
+test-pkgs: 
+	python3 -m unittest discover -v ./pkgs ${p}
