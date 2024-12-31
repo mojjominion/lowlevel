@@ -1,11 +1,10 @@
+from pkgs.tictactoe.game.board import Board
+from pkgs.tictactoe.game.move import Move
+from pkgs.tictactoe.game.player import Player
+from pkgs.tictactoe.game.rules import TicTacToeRules
 
-from tictactoe.game.move import Move
-from tictactoe.game.rules import TicTacToeRules
-from tictactoe.game.player import  Player
-from tictactoe.game.board import Board
 
 class Game:
-
     def __init__(self, rules: TicTacToeRules) -> None:
         self.board = Board()
         self.rules = rules
@@ -14,10 +13,10 @@ class Game:
         out = ""
         for row in self.getState():
             out += ",".join(row)
-            out += '\n'
+            out += "\n"
         return print(out)
 
-    def makeMove(self,player:Player, gmove: Move):
+    def makeMove(self, player: Player, gmove: Move):
         self.board.makeMove(player, gmove)
 
     def getState(self):

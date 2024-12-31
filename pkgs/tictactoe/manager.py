@@ -1,9 +1,9 @@
+from pkgs.tictactoe.ai.engine import AiEngine
+from pkgs.tictactoe.game.move import InvalidMove, Move
+from pkgs.tictactoe.game.player import Player, Symbol
+from pkgs.tictactoe.game.rules import TicTacToeRules
+from pkgs.tictactoe.game.tictactoe import Game
 
-from tictactoe.game.move import Move, InvalidMove
-from tictactoe.game.rules import TicTacToeRules
-from tictactoe.game.player import Symbol, Player
-from tictactoe.ai.engine import AiEngine
-from tictactoe.game.tictactoe import Game
 
 class GameManager:
     def __init__(self) -> None:
@@ -15,13 +15,13 @@ class GameManager:
         self.aiEngine = AiEngine()
 
     def precheck(self):
-        if winner:=self.rules.checkWinner(self.game.getState()):
-           self.winner = winner
-           return 
+        if winner := self.rules.checkWinner(self.game.getState()):
+            self.winner = winner
+            return
         return True
 
-    def makeMove(self, move:Move):
-        if not self.rules.isValid(self.game.getState(), move): 
+    def makeMove(self, move: Move):
+        if not self.rules.isValid(self.game.getState(), move):
             raise InvalidMove
         self.game.makeMove(self.player, move)
         self.player = self.player.flip()

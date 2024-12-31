@@ -1,10 +1,10 @@
+from typing import Any, List
 
-from tictactoe.game.rules import TicTacToeRules
-from typing import List, Any
-from tictactoe.game.move import Move
+from pkgs.tictactoe.game.move import Move
+from pkgs.tictactoe.game.rules import TicTacToeRules
+
 
 class AiEngine:
-
     def __init__(self) -> None:
         self.rules = TicTacToeRules()
 

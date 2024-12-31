@@ -1,13 +1,15 @@
 from enum import Enum
 
+
 class Symbol(Enum):
     X = 0
-    O = 1
+    O = 1  # noqa: E741
+
     def __str__(self) -> str:
         return self.name
 
-class Player:
 
+class Player:
     def __init__(self, symbol: Symbol) -> None:
         self.symbol = symbol
 
@@ -18,6 +20,3 @@ class Player:
         if self.symbol == Symbol.X:
             return Player(Symbol.O)
         return Player(Symbol.X)
-
-
-
