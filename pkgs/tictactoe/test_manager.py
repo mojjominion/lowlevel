@@ -1,5 +1,5 @@
 import unittest
-from typing import List
+from typing import Any, List
 
 from pkgs.tictactoe.ai.engine import AiEngine, IAiEngine
 from pkgs.tictactoe.game.move import Move
@@ -24,7 +24,7 @@ class TestAiEngine(IAiEngine):
         self.moves = moves
         self.index = 0
 
-    def basic_move(self):
+    def basic_move(self, board: List[List[Any]]):
         res = self.moves[self.index]
         self.index += 1
         return res
