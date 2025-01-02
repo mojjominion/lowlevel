@@ -14,7 +14,8 @@ class Game:
         for row in self.getState():
             out += ",".join(row)
             out += "\n"
-        return print(out)
+        print("\nBoard State:::")
+        print(out)
 
     def makeMove(self, player: Player, gmove: Move):
         self.board.makeMove(player, gmove)

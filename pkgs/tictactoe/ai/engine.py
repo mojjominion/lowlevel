@@ -1,10 +1,17 @@
-from typing import Any, List
+from abc import ABC, abstractmethod
+from typing import Any, List, Optional
 
 from pkgs.tictactoe.game.move import Move
 from pkgs.tictactoe.game.rules import TicTacToeRules
 
 
-class AiEngine:
+class IAiEngine(ABC):
+    @abstractmethod
+    def basicMove(self, board: List[List[Any]]) -> Optional[Move]:
+        return
+
+
+class AiEngine(IAiEngine):
     def __init__(self) -> None:
         self.rules = TicTacToeRules()
 

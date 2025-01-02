@@ -17,9 +17,16 @@ class TicTacToeRules:
             return False
         return self.isEmpty(board[move.row][move.col])
 
+    def checkDiag(self, board: List[List[Any]], diag: List[tuple[int, int]]):
+        st = set()
+        for x, y in diag:
+            st.add(board[x][y])
+        if len(st) == 1 and not self.isEmpty(chr := st.pop()):
+            return Player(chr)
+
     def checkWinner(self, board: List[List[Any]]) -> Optional[Player]:
         for row in board:
-            if len(set(row)) == 1 and not self.isEmpty(row[0]):
+            if not self.isEmpty(row[0]) and len(set(row)) == 1:
                 return Player(row[0])
 
         for i in range(len(board)):
@@ -32,16 +39,8 @@ class TicTacToeRules:
         diag = [(0, 0), (1, 1), (2, 2)]
         rdiag = [(0, 2), (1, 1), (2, 0)]
 
-        st = set()
-        for x, y in diag:
-            st.add(board[x][y])
-        if len(st) == 1 and not self.isEmpty(chr := st.pop()):
-            return Player(chr)
-
-        st = set()
-        for x, y in rdiag:
-            st.add(board[x][y])
-        if len(st) == 1 and not self.isEmpty(chr := st.pop()):
-            return Player(chr)
+        for d in [diag, rdiag]:
+            if res := self.checkDiag(board, d):
+                return res
 
         return None
