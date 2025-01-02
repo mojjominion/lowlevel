@@ -13,7 +13,7 @@ class Player:
     def __init__(self, symbol: Symbol) -> None:
         self.symbol = symbol
 
-    def getSymbol(self):
+    def get_symbol(self):
         return str(self.symbol)
 
     def flip(self):

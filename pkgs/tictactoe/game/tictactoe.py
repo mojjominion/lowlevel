@@ -9,16 +9,16 @@ class Game:
         self.board = Board()
         self.rules = rules
 
-    def printBoard(self):
+    def print_board(self):
         out = ""
-        for row in self.getState():
+        for row in self.get_state():
             out += ",".join(row)
             out += "\n"
         print("\nBoard State:::")
         print(out)
 
-    def makeMove(self, player: Player, gmove: Move):
-        self.board.makeMove(player, gmove)
+    def make_move(self, player: Player, gmove: Move):
+        self.board.make_move(player, gmove)
 
-    def getState(self):
+    def get_state(self):
         return self.board.state
