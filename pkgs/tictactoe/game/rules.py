@@ -21,8 +21,9 @@ class TicTacToeRules:
         st = set()
         for x, y in diag:
             st.add(board[x][y])
-        if len(st) == 1 and not self.is_empty(chr := st.pop()):
-            return Player(chr)
+        if len(st) == 1 and not self.is_empty(symbol := st.pop()):
+            return Player(symbol)
+        return None
 
     def check_winner(self, board: List[List[Any]]) -> Optional[Player]:
         for row in board:
@@ -33,8 +34,8 @@ class TicTacToeRules:
             st = set()
             for j in range(len(board[0])):
                 st.add(board[j][i])
-            if len(st) == 1 and not self.is_empty(chr := st.pop()):
-                return Player(chr)
+            if len(st) == 1 and not self.is_empty(symbol := st.pop()):
+                return Player(symbol)
 
         diag = [(0, 0), (1, 1), (2, 2)]
         rdiag = [(0, 2), (1, 1), (2, 0)]

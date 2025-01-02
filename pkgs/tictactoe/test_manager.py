@@ -14,7 +14,7 @@ if __name__ == "__main__":
         col = int(input("col::"))
         gm.make_move(Move(row=row, col=col))
         gm.trigger_ai()
-        gm.game.print_board()
+        gm.game.board.print_board()
     print(f"{gm.winner.symbol} won the game!!")
 
 

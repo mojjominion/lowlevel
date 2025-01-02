@@ -9,3 +9,11 @@ class Board:
 
     def make_move(self, player: Player, gmove: Move):
         self.state[gmove.row][gmove.col] = player.get_symbol()
+
+    def print_board(self):
+        out = ""
+        for row in self.state:
+            out += ",".join(row)
+            out += "\n"
+        print("\nBoard State:::")
+        print(out)
